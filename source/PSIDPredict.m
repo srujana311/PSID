@@ -26,6 +26,8 @@
 
 function [zPred, yPred, xPred] = PSIDPredict(idSys, y, u, settings)
 
+    time_first = true; %% modify!!
+
     if nargin < 3, u = []; end
     if nargin < 4, settings = struct; end
     
@@ -57,16 +59,19 @@ function [zPred, yPred, xPred] = PSIDPredict(idSys, y, u, settings)
     nx = size(A, 1);
     Xp = zeros(nx, 1); % Initial state
     xPred = nan(N, nx);
-    for i = 1:N
+    for i = 2:N
         xPred(i, :) = Xp; % X(i|i-1)
         yThis = y(i, :);
-        if ~isempty(u), uThis = u(i, :); end
+        if ~isempty(u), uThis = u(i-1, :); end
         if isfield(idSys, 'YPrepModel') && ~isempty(idSys.YPrepModel)
-            yThis = idSys.YPrepModel.apply(yThis); % Apply any mean-removal/zscoring
+            yThis = idSys.YPrepModel.apply(yThis,1); % Apply any mean-removal/zscoring
+            % if idSys.YPrepModel.remove_mean || idSys.YPrepModel.zscore
+            %     yThis = yThis - idSys.YPrepModel.dataMean()
+            % end
         end
         % Constructing: Xp = A * Xp  + K * (yThis' - Cy*Xp - Dy*uThis'); % Kalman prediction  
         innovThis = yThis' - Cy*Xp ;
-        if ~isempty(u) && isfield(idSys, 'UPrepModel') && ~isempty(idSys.UPrepModel), uThis = idSys.UPrepModel.apply(uThis); end% Apply any mean-removal/zscoring
+        if ~isempty(u) && isfield(idSys, 'UPrepModel') && ~isempty(idSys.UPrepModel), uThis = idSys.UPrepModel.apply(uThis,time_first); end% Apply any mean-removal/zscoring
         if ~isempty(u) && ~isempty(Dy)
             innovThis = innovThis -  Dy*uThis';
         end
@@ -78,10 +83,15 @@ function [zPred, yPred, xPred] = PSIDPredict(idSys, y, u, settings)
     end
     
     yPred = (Cy * xPred.').';
-    zPred = (idSys.Cz * xPred.').';
+    if ~isempty(idSys.Cz)
+      zPred = (idSys.Cz * xPred.').';
+    else
+      zPred = [];
+    end
+
     
     if ~isempty(u) && isfield(idSys, 'UPrepModel') && ~isempty(idSys.UPrepModel)
-        u = idSys.UPrepModel.apply(u);
+        u = idSys.UPrepModel.apply(u,time_first);
     end
     if ~isempty(Dy) && ~isempty(u) % Apply input if has feedthrough term
         yPred = yPred + (Dy * u.').';
@@ -91,10 +101,10 @@ function [zPred, yPred, xPred] = PSIDPredict(idSys, y, u, settings)
     end
         
     if isfield(idSys, 'YPrepModel') && ~isempty(idSys.YPrepModel)
-        yPred = idSys.YPrepModel.apply_inverse(yPred); % Apply inverse of any mean-removal/zscoring
+        yPred = idSys.YPrepModel.apply_inverse(yPred,time_first); % Apply inverse of any mean-removal/zscoring
     end
     if isfield(idSys, 'ZPrepModel') && ~isempty(idSys.ZPrepModel) % Apply inverse of any mean-removal/zscoring
-        zPred = idSys.ZPrepModel.apply_inverse(zPred);
+        zPred = idSys.ZPrepModel.apply_inverse(zPred,time_first);
     end
     
     end

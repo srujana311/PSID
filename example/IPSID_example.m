@@ -191,6 +191,7 @@ R2Ideal = evalPrediction(zTest, zTestPredIdeal, 'R2');
 
 fprintf('Decoding R2:\n  IPSID => %.3g, IPSID (without additional step 2) => %.3g, Ideal using true model = %.3g\n', mean(R2), mean(R2_low_dim), mean(R2Ideal));
 fprintf('Neural self-prediction R2:\n  IPSID => %.3g, IPSID (without additional step 2) => %.3g, Ideal using true model = %.3g\n', mean(yR2), mean(yR2_low_dim), mean(yR2Ideal));
+
 %% Plot the true and identified eigenvalues for IPSID with the additional steps
 
 % Intrinsic behaviorally relevant eigenvalues encoded in neural activity

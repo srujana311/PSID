@@ -95,7 +95,7 @@
 %               Must be true if data is not zero mean. Defaults to true.
 %     - (16) zscore_Y: if true will z-score y. It is ok to set this to false,
 %                     but setting to true may help with stopping some dimensions of 
-%                     data from dominating others. Defaults to false.
+%                     data from dominating others. Defaults to true.
 %     - (17) zscore_Z: if true will z-score Z. It is ok to set this to false,
 %                     but setting to True may help with stopping some dimensions of 
 %                     data from dominating others. Defaults to true.
@@ -142,9 +142,9 @@ function [idSys, WS] = IPSID(y, z, u, nx, n1, k, varargin)
     addParameter(p, 'remove_mean_Y', true, @islogical);
     addParameter(p, 'remove_mean_Z', true, @islogical);
     addParameter(p, 'remove_mean_U', true, @islogical);
-    addParameter(p, 'zscore_Y', false, @islogical);
-    addParameter(p, 'zscore_Z', false, @islogical);
-    addParameter(p, 'zscore_U', false, @islogical);
+    addParameter(p, 'zscore_Y', true, @islogical);
+    addParameter(p, 'zscore_Z', true, @islogical);
+    addParameter(p, 'zscore_U', true, @islogical);
     
     parse(p,varargin{:});
     

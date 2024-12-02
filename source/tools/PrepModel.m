@@ -71,7 +71,7 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             %           data has time as the first dimension. Otherwise 
             %           assumes time is the second dimension. In any case, 
             %           model will by default treat new data as if time is 
-            %           the first dimension. Defaults to True.
+            %           the first dimension. Defaults to False.
             % Outputs: 
             % - (none)
             p = inputParser;
@@ -128,10 +128,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             % Any of the following can be provided as a key-value pair.
             % - (1) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) yMean: mean of the data, approtpiately transposed.
-            if nargin < 2, time_first = true; end
+            if nargin < 2, time_first = false; end
             if time_first
                 yMean = obj.dataMean;
             else
@@ -144,10 +144,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             % Inputs: 
             % - (1) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) yStd: mean of the data, approtpiately transposed.
-            if nargin < 2, time_first = true; end
+            if nargin < 2, time_first = false; end
             if time_first
                 yStd = obj.dataStd;
             else
@@ -162,10 +162,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             %           time and the second dimension is the data. 
             % - (2) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) Y: preprocessed data.
-            if nargin < 3, time_first = true; end
+            if nargin < 3, time_first = false; end
             if obj.remove_mean
                 Y = Y - obj.get_mean(time_first);
             end
@@ -188,10 +188,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             %           cell array of multiple data segments.
             % - (2) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) Y: preprocessed data.
-            if nargin < 3, time_first = true; end
+            if nargin < 3, time_first = false; end
             if iscell(Y)
                 Y = arrayfun(@(YThis)( obj.apply_segment(YThis{1}, time_first) ), Y, 'UniformOutput', false);
             else
@@ -207,10 +207,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             %           time and the second dimension is the data. 
             % - (2) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) Y: data with preprocessing undone.
-            if nargin < 3, time_first = true; end
+            if nargin < 3, time_first = false; end
             if obj.zscore
                 okDims = obj.dataStd > 0;
                 yStd = obj.get_std(time_first);
@@ -234,10 +234,10 @@ classdef PrepModel < handle & matlab.mixin.Copyable
             %           cell array of multiple data segments.
             % - (2) time_first (bool, optional): If true, will return the 
             %           mean a row vector, otherwise returns it as a row 
-            %           vector. Defaults to True.
+            %           vector. Defaults to False.
             % Outputs: 
             % - (1) Y: data with preprocessing undone.
-            if nargin < 3, time_first = true; end
+            if nargin < 3, time_first = false; end
             if iscell(Y)
                 Y = arrayfun(@(YThis)( obj.apply_inverse_segment(YThis{1}, time_first) ), Y, 'UniformOutput', false);
             else
